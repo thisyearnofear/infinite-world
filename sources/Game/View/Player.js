@@ -28,92 +28,111 @@ export default class Player {
   setHelper() {
     this.helper = new THREE.Group();
 
-    // Body - main penguin body (larger and rounder)
+    // Body - main hippo body (larger and rounder)
     const body = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.45, 0.9, 8, 16),
+      new THREE.CapsuleGeometry(0.6, 1.2, 8, 16),
       new PlayerMaterial()
     );
-    body.position.y = 0.75;
+    body.position.y = 0.9;
     this.helper.add(body);
 
-    // White belly (flattened capsule)
-    const belly = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.35, 0.7, 8, 16),
-      new PlayerMaterial()
-    );
-    belly.position.set(0, 0.75, 0.15);
-    belly.scale.z = 0.4;
-    this.helper.add(belly);
-
-    // Head - rounder and larger
+    // Head - larger and more hippo-like
     const head = new THREE.Mesh(
-      new THREE.SphereGeometry(0.3, 12, 12),
+      new THREE.SphereGeometry(0.5, 12, 12),
       new PlayerMaterial()
     );
-    head.position.y = 1.5;
-    head.position.z = 0.15;
+    head.position.y = 1.7;
+    head.position.z = 0.3;
+    head.scale.z = 1.3; // Elongated snout
     this.helper.add(head);
 
-    // White face mask
-    const faceMask = new THREE.Mesh(
-      new THREE.SphereGeometry(0.25, 12, 12),
+    // Snout
+    const snout = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.4, 0.3, 8, 16),
       new PlayerMaterial()
     );
-    faceMask.position.set(0, 1.5, 0.22);
-    faceMask.scale.z = 0.4;
-    this.helper.add(faceMask);
+    snout.rotation.x = Math.PI * 0.5;
+    snout.position.set(0, 1.5, 0.7);
+    this.helper.add(snout);
 
-    // Wings - larger flattened boxes
-    const wingGeometry = new THREE.BoxGeometry(0.12, 0.6, 0.3);
-    const leftWing = new THREE.Mesh(wingGeometry, new PlayerMaterial());
-    leftWing.position.set(-0.45, 0.9, 0);
-    leftWing.rotation.z = 0.3;
-    this.helper.add(leftWing);
+    // Nostrils
+    const nostrilGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+    const leftNostril = new THREE.Mesh(nostrilGeometry, new PlayerMaterial());
+    leftNostril.position.set(-0.15, 1.6, 0.9);
+    this.helper.add(leftNostril);
 
-    const rightWing = new THREE.Mesh(wingGeometry, new PlayerMaterial());
-    rightWing.position.set(0.45, 0.9, 0);
-    rightWing.rotation.z = -0.3;
-    this.helper.add(rightWing);
+    const rightNostril = new THREE.Mesh(nostrilGeometry, new PlayerMaterial());
+    rightNostril.position.set(0.15, 1.6, 0.9);
+    this.helper.add(rightNostril);
 
-    // Feet
-    const footGeometry = new THREE.BoxGeometry(0.2, 0.08, 0.3);
-    const leftFoot = new THREE.Mesh(footGeometry, new PlayerMaterial());
-    leftFoot.position.set(-0.2, 0.04, 0);
-    leftFoot.rotation.y = 0.3;
-    this.helper.add(leftFoot);
+    // Legs
+    const legGeometry = new THREE.CylinderGeometry(0.15, 0.15, 0.8, 8);
+    const frontLeftLeg = new THREE.Mesh(legGeometry, new PlayerMaterial());
+    frontLeftLeg.position.set(-0.4, 0.4, 0.3);
+    this.helper.add(frontLeftLeg);
 
-    const rightFoot = new THREE.Mesh(footGeometry, new PlayerMaterial());
-    rightFoot.position.set(0.2, 0.04, 0);
-    rightFoot.rotation.y = -0.3;
-    this.helper.add(rightFoot);
+    const frontRightLeg = new THREE.Mesh(legGeometry, new PlayerMaterial());
+    frontRightLeg.position.set(0.4, 0.4, 0.3);
+    this.helper.add(frontRightLeg);
 
-    // Beak - slightly larger
-    const beak = new THREE.Mesh(
-      new THREE.ConeGeometry(0.06, 0.2, 8),
-      new PlayerMaterial()
-    );
-    beak.rotation.x = -Math.PI * 0.5;
-    beak.position.set(0, 1.5, 0.45);
-    this.helper.add(beak);
+    const backLeftLeg = new THREE.Mesh(legGeometry, new PlayerMaterial());
+    backLeftLeg.position.set(-0.4, 0.4, -0.3);
+    this.helper.add(backLeftLeg);
+
+    const backRightLeg = new THREE.Mesh(legGeometry, new PlayerMaterial());
+    backRightLeg.position.set(0.4, 0.4, -0.3);
+    this.helper.add(backRightLeg);
+
+    // Ears
+    const earGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.1, 8);
+    const leftEar = new THREE.Mesh(earGeometry, new PlayerMaterial());
+    leftEar.position.set(-0.3, 2.1, 0.2);
+    this.helper.add(leftEar);
+
+    const rightEar = new THREE.Mesh(earGeometry, new PlayerMaterial());
+    rightEar.position.set(0.3, 2.1, 0.2);
+    this.helper.add(rightEar);
 
     // Set materials
-    const parts = [body, head, leftWing, rightWing, beak, leftFoot, rightFoot];
-    const whiteParts = [belly, faceMask];
+    const parts = [
+      body,
+      head,
+      snout,
+      leftNostril,
+      rightNostril,
+      frontLeftLeg,
+      frontRightLeg,
+      backLeftLeg,
+      backRightLeg,
+      leftEar,
+      rightEar,
+    ];
 
-    parts.forEach((part) => {
-      part.material.uniforms.uColor.value =
-        part === beak || part === leftFoot || part === rightFoot
-          ? new THREE.Color("#ffa500")
-          : new THREE.Color("#000000");
-      part.material.uniforms.uSunPosition.value = new THREE.Vector3(
-        -0.5,
-        -0.5,
-        -0.5
-      );
-    });
-
-    whiteParts.forEach((part) => {
-      part.material.uniforms.uColor.value = new THREE.Color("#ffffff");
+    // Assign fun colors to different parts
+    parts.forEach((part, index) => {
+      let color;
+      switch (part) {
+        case body:
+          color = new THREE.Color("#FF69B4"); // Hot pink body
+          break;
+        case head:
+          color = new THREE.Color("#FF69B4"); // Match body
+          break;
+        case snout:
+          color = new THREE.Color("#FFB6C1"); // Lighter pink snout
+          break;
+        case leftNostril:
+        case rightNostril:
+          color = new THREE.Color("#FF1493"); // Deep pink nostrils
+          break;
+        case leftEar:
+        case rightEar:
+          color = new THREE.Color("#FF69B4"); // Match body
+          break;
+        default: // legs
+          color = new THREE.Color("#FFB6C1"); // Lighter pink legs
+      }
+      part.material.uniforms.uColor.value = color;
       part.material.uniforms.uSunPosition.value = new THREE.Vector3(
         -0.5,
         -0.5,
@@ -148,24 +167,53 @@ export default class Player {
 
     // Helper rotation with body tilt
     this.helper.rotation.y = playerState.rotation;
-    this.helper.rotation.x = playerState.bodyTilt || 0;
-    this.helper.rotation.z = (playerState.bodyTilt || 0) * 0.5;
 
-    // Update foot rotations
-    const leftFoot = this.helper.children[7]; // Index of left foot
-    const rightFoot = this.helper.children[8]; // Index of right foot
-    if (leftFoot && rightFoot) {
-      leftFoot.rotation.x = playerState.footRotation || 0;
-      rightFoot.rotation.x = -(playerState.footRotation || 0);
+    // Add bouncy movement
+    const bounceAmount = Math.sin(this.state.time.elapsed * 3) * 0.1;
+    this.helper.position.y = bounceAmount;
+
+    // Add playful head bobbing
+    const headBob = Math.sin(this.state.time.elapsed * 2) * 0.05;
+    if (this.helper.children[1]) {
+      // Head
+      this.helper.children[1].position.y = 1.7 + headBob;
     }
 
-    // Update wing positions during waddle
-    const leftWing = this.helper.children[4]; // Index of left wing
-    const rightWing = this.helper.children[5]; // Index of right wing
-    if (leftWing && rightWing && !playerState.isSliding) {
-      const wingWaddle = Math.sin(playerState.waddleTime || 0) * 0.2;
-      leftWing.rotation.z = 0.3 + wingWaddle;
-      rightWing.rotation.z = -0.3 - wingWaddle;
+    // Add ear wiggling
+    const earWiggle = Math.sin(this.state.time.elapsed * 4) * 0.1;
+    if (this.helper.children[9]) {
+      // Left ear
+      this.helper.children[9].rotation.z = earWiggle;
+    }
+    if (this.helper.children[10]) {
+      // Right ear
+      this.helper.children[10].rotation.z = -earWiggle;
+    }
+
+    // Leg animations for walking
+    const legAnimation = Math.sin(this.state.time.elapsed * 5);
+    const legRotationAmount = 0.3;
+
+    if (!playerState.isSliding) {
+      // Front legs
+      if (this.helper.children[5]) {
+        // Front left leg
+        this.helper.children[5].rotation.x = legAnimation * legRotationAmount;
+      }
+      if (this.helper.children[6]) {
+        // Front right leg
+        this.helper.children[6].rotation.x = -legAnimation * legRotationAmount;
+      }
+
+      // Back legs
+      if (this.helper.children[7]) {
+        // Back left leg
+        this.helper.children[7].rotation.x = -legAnimation * legRotationAmount;
+      }
+      if (this.helper.children[8]) {
+        // Back right leg
+        this.helper.children[8].rotation.x = legAnimation * legRotationAmount;
+      }
     }
 
     // Update sun position for all parts

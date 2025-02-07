@@ -102,10 +102,15 @@ void main()
     vec3 viewNormal = normalize(normalMatrix * normal);
 
     // Grass color
-    vec3 uGrassDefaultColor = vec3(0.52, 0.65, 0.26);
-    vec3 uGrassShadedColor = vec3(0.52 / 1.3, 0.65 / 1.3, 0.26 / 1.3);
-    vec3 lowColor = mix(uGrassShadedColor, uGrassDefaultColor, 1.0 - scale); // Match the terrain
+    vec3 uGrassDefaultColor = vec3(1.0, 0.71, 0.76); // Light pink
+    vec3 uGrassShadedColor = vec3(0.77, 0.55, 0.58); // Darker pink for shading
+    vec3 lowColor = mix(uGrassShadedColor, uGrassDefaultColor, 1.0); // Remove scale dependency to maintain color at distance
     vec3 color = mix(lowColor, uGrassDefaultColor, tipness);
+
+    // Increase visibility at distance by reducing the effect of attenuation on color
+    float distanceToCamera = length(modelPosition.xyz - cameraPosition);
+    float distanceFactor = smoothstep(0.0, 50.0, distanceToCamera); // Adjust these values to control fade distance
+    color = mix(color, uGrassDefaultColor, distanceFactor * 0.3); // Subtle blend to maintain color at distance
 
     // Sun shade
     float sunShade = getSunShade(normal);
